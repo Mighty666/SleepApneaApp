@@ -17,11 +17,13 @@ function generateToken(payload: object): string {
 
 // using hardcoded demo user for serverless
 // in production use vercel kv, planetscale, or similar
-const DEMO_USERS: Record<string, { name: string; email: string; passwordHash: string }> = {
-  'demo@neendai.com': {
-    name: 'Demo User',
-    email: 'demo@neendai.com',
-    passwordHash: 'demo123' // in production use bcrypt
+function getDemoUsers(): Record<string, { name: string; email: string; passwordHash: string }> {
+  return {
+    'demo@neendai.com': {
+      name: 'Demo User',
+      email: 'demo@neendai.com',
+      passwordHash: 'demo123' // in production use bcrypt
+    }
   }
 }
 
@@ -79,6 +81,7 @@ export async function POST(request: Request) {
     const normalizedEmail = email.toLowerCase().trim()
 
     // check if user exists
+    const DEMO_USERS = getDemoUsers()
     const user = DEMO_USERS[normalizedEmail]
     if (!user) {
       return NextResponse.json(
