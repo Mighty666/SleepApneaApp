@@ -46,17 +46,14 @@ export async function POST(request: Request) {
 
     let body
     try {
-      const text = await request.text()
-      if (!text) {
-        return NextResponse.json(
-          { error: 'EMPTY_BODY', message: 'Request body is required' },
-          { status: 400 }
-        )
-      }
-      body = JSON.parse(text)
+      // Use request.json() directly - it's the proper way for JSON in Next.js
+      body = await request.json()
     } catch (parseError) {
+      // If json() fails, try to get more details
+      const errorMsg = parseError instanceof Error ? parseError.message : 'Unknown error'
+      console.error('JSON parse error:', errorMsg)
       return NextResponse.json(
-        { error: 'INVALID_JSON', message: 'Request body must be valid JSON' },
+        { error: 'INVALID_JSON', message: 'Request body must be valid JSON', details: errorMsg },
         { status: 400 }
       )
     }
